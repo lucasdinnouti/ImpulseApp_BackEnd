@@ -1,0 +1,9 @@
+runtime: php
+env: flex
+
+runtime_config:
+  document_root: web
+
+## Uncomment for Cloud SQL
+# beta_settings:
+#   cloud_sql_instances: "INSTANCE_CONNECTION_NAME"
