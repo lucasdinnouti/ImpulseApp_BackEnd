@@ -24,6 +24,7 @@ namespace Google\Cloud\Samples\Bookshelf;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Google\Cloud\Samples\Bookshelf\DataModel\DataModelInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 $app->get('/', function (Request $request) use ($app) {
     return $app->redirect('/posts/');
@@ -44,26 +45,38 @@ $app->get('/posts/', function (Request $request) use ($app) {
     ));
 });
 
-//////////////////////  A Editar /////////////////////////////////////
+//////////////////////  A editar /////////////////////////////////////
 
-$app->post('/posts/', function (Request $request) use ($app) {
+$app->post('/lists/', function (Request $request) use ($app) {
     /** @var DataModelInterface $model */
     $model = $app['bookshelf.model'];
     /** @var Twig_Environment $twig */
-    $twig = $app['twig'];
+    //$twig = $app['twig'];
     $token = $request->query->get('page_token');
     $postList = $model->listPosts($app['bookshelf.page_size'], $token);
 
-    $response = "";
+    $resposta = "";
 
-    foreach ($postList as $sp) {
-        $response += "{";
-        print_r($sp);
-        $response += "}";
-    }
-    ));
 
-     return new Response($resposta, Response::HTTP_OK);
+    // foreach ($postList as $pubs) {
+    //     foreach ($pubs as $sp) {
+    //         $resposta = $resposta."{";
+    //         $resposta = $resposta.'"title":"'.$sp['title'].'", ';
+    //         $resposta = $resposta.'"author":"'.$sp['author'].'", ';
+    //         $resposta = $resposta.'"date":"'.$sp['date'].'", ';
+    //         $resposta = $resposta.'"content":"'.$sp['content'].'", ';
+    //         $resposta = $resposta."}";
+    //     }
+
+    // }
+
+    $response = new JsonResponse();
+    $response->setData($postList);
+    $response->setStatusCode(Response::HTTP_OK);
+
+    return $response;
+
+    //return new Response($resposta, Response::HTTP_OK);
 });
 // [END index]
 
