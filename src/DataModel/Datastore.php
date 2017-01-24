@@ -29,14 +29,12 @@ class Datastore implements DataModelInterface
     private $datasetId;
     private $datastore;
     protected $columns = [
-        'id'            => 'integer',
-        'title'         => 'string',
-        'author'        => 'string',
-        'publishedDate' => 'timestamp',
-        'imageUrl'      => 'string',
-        'description'   => 'string',
-        'createdBy'     => 'string',
-        'createdById'   => 'string',
+      'title'       => 'string',
+      'date'        => 'timestamp',
+      'content'     => 'string',
+      'image'       => 'string',
+      'author'      => 'string',
+      'published'   => 'integer'
     ];
 
     public function __construct($projectId)
@@ -47,37 +45,37 @@ class Datastore implements DataModelInterface
         ]);
     }
 
-    public function listBooks($limit = 10, $cursor = null)
+    public function listPosts($limit = 10, $cursor = null)
     {
         $query = $this->datastore->query()
-            ->kind('Book')
+            ->kind('Post')
             ->order('title')
             ->limit($limit)
             ->start($cursor);
 
         $results = $this->datastore->runQuery($query);
 
-        $books = [];
+        $posts = [];
         $nextPageCursor = null;
         foreach ($results as $entity) {
-            $book = $entity->get();
-            $book['id'] = $entity->key()->pathEndIdentifier();
-            $books[] = $book;
+            $post = $entity->get();
+            $post['id'] = $entity->key()->pathEndIdentifier();
+            $posts[] = $post;
             $nextPageCursor = $entity->cursor();
         }
 
         return [
-            'books' => $books,
+            'posts' => $posts,
             'cursor' => $nextPageCursor,
         ];
     }
 
-    public function create($book, $key = null)
+    public function create($post, $key = null)
     {
-        $this->verifyBook($book);
+        $this->verifyPost($post);
 
-        $key = $this->datastore->key('Book');
-        $entity = $this->datastore->entity($key, $book);
+        $key = $this->datastore->key('Post');
+        $entity = $this->datastore->entity($key, $post);
 
         $this->datastore->insert($entity);
 
@@ -87,31 +85,31 @@ class Datastore implements DataModelInterface
 
     public function read($id)
     {
-        $key = $this->datastore->key('Book', $id);
+        $key = $this->datastore->key('Post', $id);
         $entity = $this->datastore->lookup($key);
 
         if ($entity) {
-            $book = $entity->get();
-            $book['id'] = $id;
-            return $book;
+            $post = $entity->get();
+            $post['id'] = $id;
+            return $post;
         }
 
         return false;
     }
 
-    public function update($book)
+    public function update($post)
     {
-        $this->verifyBook($book);
+        $this->verifyPost($post);
 
-        if (!isset($book['id'])) {
-            throw new \InvalidArgumentException('Book must have an "id" attribute');
+        if (!isset($post['id'])) {
+            throw new \InvalidArgumentException('Post must have an "id" attribute');
         }
 
         $transaction = $this->datastore->transaction();
-        $key = $this->datastore->key('Book', $book['id']);
+        $key = $this->datastore->key('Post', $post['id']);
         $task = $transaction->lookup($key);
-        unset($book['id']);
-        $entity = $this->datastore->entity($key, $book);
+        unset($post['id']);
+        $entity = $this->datastore->entity($key, $post);
         $transaction->upsert($entity);
         $transaction->commit();
 
@@ -121,15 +119,15 @@ class Datastore implements DataModelInterface
 
     public function delete($id)
     {
-        $key = $this->datastore->key('Book', $id);
+        $key = $this->datastore->key('Post', $id);
         return $this->datastore->delete($key);
     }
 
-    private function verifyBook($book)
+    private function verifyPost($post)
     {
-        if ($invalid = array_diff_key($book, $this->columns)) {
+        if ($invalid = array_diff_key($post, $this->columns)) {
             throw new \InvalidArgumentException(sprintf(
-                'unsupported book properties: "%s"',
+                'unsupported post properties: "%s"',
                 implode(', ', $invalid)
             ));
         }

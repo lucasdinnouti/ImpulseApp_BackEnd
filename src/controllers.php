@@ -26,72 +26,96 @@ use Symfony\Component\HttpFoundation\Response;
 use Google\Cloud\Samples\Bookshelf\DataModel\DataModelInterface;
 
 $app->get('/', function (Request $request) use ($app) {
-    return $app->redirect('/books/');
+    return $app->redirect('/posts/');
 });
 
 // [START index]
-$app->get('/books/', function (Request $request) use ($app) {
+$app->get('/posts/', function (Request $request) use ($app) {
     /** @var DataModelInterface $model */
     $model = $app['bookshelf.model'];
     /** @var Twig_Environment $twig */
     $twig = $app['twig'];
     $token = $request->query->get('page_token');
-    $bookList = $model->listBooks($app['bookshelf.page_size'], $token);
+    $postList = $model->listPosts($app['bookshelf.page_size'], $token);
 
     return $twig->render('list.html.twig', array(
-        'books' => $bookList['books'],
-        'next_page_token' => $bookList['cursor'],
+        'posts' => $postList['posts'],
+        'next_page_token' => $postList['cursor'],
     ));
+});
+
+//////////////////////  A Editar /////////////////////////////////////
+
+$app->post('/posts/', function (Request $request) use ($app) {
+    /** @var DataModelInterface $model */
+    $model = $app['bookshelf.model'];
+    /** @var Twig_Environment $twig */
+    $twig = $app['twig'];
+    $token = $request->query->get('page_token');
+    $postList = $model->listPosts($app['bookshelf.page_size'], $token);
+
+    $response = "";
+
+    foreach ($postList as $sp) {
+        $response += "{";
+        print_r($sp);
+        $response += "}";
+    }
+    ));
+
+     return new Response($resposta, Response::HTTP_OK);
 });
 // [END index]
 
+//////////////////////////////////////////////////////////////////////
+
 // [START add]
-$app->get('/books/add', function () use ($app) {
+$app->get('/posts/add', function () use ($app) {
     /** @var Twig_Environment $twig */
     $twig = $app['twig'];
 
     return $twig->render('form.html.twig', array(
         'action' => 'Add',
-        'book' => array(),
+        'post' => array(),
     ));
 });
 
-$app->post('/books/add', function (Request $request) use ($app) {
+$app->post('/posts/add', function (Request $request) use ($app) {
     /** @var DataModelInterface $model */
     $model = $app['bookshelf.model'];
-    $book = $request->request->all();
-    if (!empty($book['publishedDate'])) {
-        $d = new \DateTime($book['publishedDate']);
-        $book['publishedDate'] = $d->setTimezone(
+    $post = $request->request->all();
+    if (!empty($post['date'])) {
+        $d = new \DateTime($post['date']);
+        $post['date'] = $d->setTimezone(
             new \DateTimeZone('UTC'))->format("Y-m-d\TH:i:s\Z");
     }
-    $id = $model->create($book);
+    $id = $model->create($post);
 
-    return $app->redirect("/books/$id");
+    return $app->redirect("/posts/$id");
 });
 // [END add]
 
 // [START show]
-$app->get('/books/{id}', function ($id) use ($app) {
+$app->get('/posts/{id}', function ($id) use ($app) {
     /** @var DataModelInterface $model */
     $model = $app['bookshelf.model'];
-    $book = $model->read($id);
-    if (!$book) {
+    $post = $model->read($id);
+    if (!$post) {
         return new Response('', Response::HTTP_NOT_FOUND);
     }
     /** @var Twig_Environment $twig */
     $twig = $app['twig'];
 
-    return $twig->render('view.html.twig', array('book' => $book));
+    return $twig->render('view.html.twig', array('post' => $post));
 });
 // [END show]
 
 // [START edit]
-$app->get('/books/{id}/edit', function ($id) use ($app) {
+$app->get('/posts/{id}/edit', function ($id) use ($app) {
     /** @var DataModelInterface $model */
     $model = $app['bookshelf.model'];
-    $book = $model->read($id);
-    if (!$book) {
+    $post = $model->read($id);
+    if (!$post) {
         return new Response('', Response::HTTP_NOT_FOUND);
     }
     /** @var Twig_Environment $twig */
@@ -99,25 +123,25 @@ $app->get('/books/{id}/edit', function ($id) use ($app) {
 
     return $twig->render('form.html.twig', array(
         'action' => 'Edit',
-        'book' => $book,
+        'book' => $post,
     ));
 });
 
-$app->post('/books/{id}/edit', function (Request $request, $id) use ($app) {
-    $book = $request->request->all();
-    $book['id'] = $id;
+$app->post('/posts/{id}/edit', function (Request $request, $id) use ($app) {
+    $post = $request->request->all();
+    $post['id'] = $id;
     /** @var DataModelInterface $model */
     $model = $app['bookshelf.model'];
     if (!$model->read($id)) {
         return new Response('', Response::HTTP_NOT_FOUND);
     }
-    if (!empty($book['publishedDate'])) {
-        $d = new \DateTime($book['publishedDate']);
-        $book['publishedDate'] = $d->setTimezone(
+    if (!empty($post['date'])) {
+        $d = new \DateTime($post['date']);
+        $post['date'] = $d->setTimezone(
             new \DateTimeZone('UTC'))->format("Y-m-d\TH:i:s\Z");
     }
-    if ($model->update($book)) {
-        return $app->redirect("/books/$id");
+    if ($model->update($post)) {
+        return $app->redirect("/posts/$id");
     }
 
     return new Response('Could not update book');
@@ -125,14 +149,14 @@ $app->post('/books/{id}/edit', function (Request $request, $id) use ($app) {
 // [END edit]
 
 // [START delete]
-$app->post('/books/{id}/delete', function ($id) use ($app) {
+$app->post('/posts/{id}/delete', function ($id) use ($app) {
     /** @var DataModelInterface $model */
     $model = $app['bookshelf.model'];
-    $book = $model->read($id);
-    if ($book) {
+    $post = $model->read($id);
+    if ($post) {
         $model->delete($id);
 
-        return $app->redirect('/books/', Response::HTTP_SEE_OTHER);
+        return $app->redirect('/posts/', Response::HTTP_SEE_OTHER);
     }
 
     return new Response('', Response::HTTP_NOT_FOUND);
@@ -145,10 +169,10 @@ $app->post('/impulse/', function () use ($app){
     /** @var DataModelInterface $model */
         /** @var DataModelInterface $model */
     $model = $app['bookshelf.model'];
-    $book = $model->read("5639445604728832");
+    $post = $model->read("5639445604728832");
     /** @var Twig_Environment $twig */
 
-    $resposta = $book['title'];
+    $resposta = $post['title'];
 
     return new Response($resposta, Response::HTTP_OK);
 });

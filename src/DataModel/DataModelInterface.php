@@ -35,7 +35,7 @@ interface DataModelInterface
      *               'cursor' => pass to next call to listBooks() to fetch
      *               more books]
      */
-    public function listBooks($limit = 10, $cursor = null);
+    public function listPosts($limit = 10, $cursor = null);
 
     /**
      * Creates a new book in the data model.

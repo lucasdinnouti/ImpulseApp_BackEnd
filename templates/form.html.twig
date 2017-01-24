@@ -14,36 +14,36 @@
 # limitations under the License.
 #}
 
-{# [START book_form] #}
+{# [START post_form] #}
 {% extends "base.html.twig" %}
 
 {% block content %}
-<h3>{{action}} book</h3>
+<h3>{{action}} post</h3>
 
 <form method="POST" enctype="multipart/form-data">
 
   <div class="form-group">
     <label for="title">Title</label>
-    <input type="text" name="title" id="title" value="{{book.title}}" class="form-control"/>
+    <input type="text" name="title" id="title" value="{{post.title}}" class="form-control"/>
   </div>
 
   <div class="form-group">
     <label for="author">Author</label>
-    <input type="text" name="author" id="author" value="{{book.author}}" class="form-control"/>
+    <input type="text" name="author" id="author" value="{{post.author}}" class="form-control"/>
   </div>
 
   <div class="form-group">
-    <label for="publishedDate">Date Published</label>
-    <input type="text" name="publishedDate" id="publishedDate" value="{{book.publishedDate|date("F jS, Y")}}" class="form-control"/>
+    <label for="date">Date Published</label>
+    <input type="text" name="date" id="date" value="{{post.date|date("F jS, Y")}}" class="form-control"/>
   </div>
 
   <div class="form-group">
-    <label for="description">Description</label>
-    <textarea name="description" id="description" class="form-control">{{book.description}}</textarea>
+    <label for="content">Description</label>
+    <textarea name="content" id="content" class="form-control">{{post.content}}</textarea>
   </div>
 
   <button id="submit" type="submit" class="btn btn-success">Save</button>
 </form>
 
 {% endblock %}
-{# [END book_form] #}
+{# [END post_form] #}

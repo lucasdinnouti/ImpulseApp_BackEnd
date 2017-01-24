@@ -18,29 +18,29 @@
 
 {% block content %}
 
-<h3>Books</h3>
-<a href="/books/add" class="btn btn-success btn-sm">
+<h3>Posts</h3>
+<a href="/posts/add" class="btn btn-success btn-sm">
   <i class="glyphicon glyphicon-plus"></i>
-  Add book
+  Add post
 </a>
 
-{# [START book_list] #}
-{% for book in books %}
+{# [START post_list] #}
+{% for post in posts %}
 <div class="media">
-  <a href="/books/{{book.id}}">
+  <a href="/posts/{{post.id}}">
     <div class="media-left">
       <img src="http://placekitten.com/g/128/192">
     </div>
     <div class="media-body">
-      <h4>{{book.title}}</h4>
-      <p>{{book.author}}</p>
+      <h4>{{post.title}}</h4>
+      <p>{{post.author}}</p>
     </div>
   </a>
 </div>
 {% else %}
-<p>No books found</p>
+<p>No posts found</p>
 {% endfor %}
-{# [END book_list] #}
+{# [END post_list] #}
 
 {% if next_page_token %}
 <nav>
