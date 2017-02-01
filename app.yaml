@@ -1,8 +1,12 @@
-runtime: php
-env: flex
+runtime: php55
+api_version: 1
 
-runtime_config:
-  document_root: web
+handlers:
+- url: /.*
+  script: web/index.php
+
+#runtime_config:
+#  document_root: web
 
 ## Uncomment for Cloud SQL
 # beta_settings:

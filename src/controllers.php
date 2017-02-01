@@ -55,8 +55,7 @@ $app->post('/lists/', function (Request $request) use ($app) {
     $token = $request->query->get('page_token');
     $postList = $model->listPosts($app['bookshelf.page_size'], $token);
 
-    $resposta = "";
-
+    // $resposta = "";
 
     // foreach ($postList as $pubs) {
     //     foreach ($pubs as $sp) {
@@ -95,7 +94,7 @@ $app->get('/posts/add', function () use ($app) {
 
 $app->post('/posts/add', function (Request $request) use ($app) {
     /** @var DataModelInterface $model */
-    $model = $app['bookshelf.model'];
+    $model = $ ['bookshelf.model'];
     $post = $request->request->all();
     if (!empty($post['date'])) {
         $d = new \DateTime($post['date']);
@@ -104,7 +103,6 @@ $app->post('/posts/add', function (Request $request) use ($app) {
     }
     $id = $model->create($post);
 
-    return $app->redirect("/posts/$id");
 });
 // [END add]
 
