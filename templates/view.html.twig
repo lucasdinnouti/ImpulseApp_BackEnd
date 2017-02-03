@@ -19,11 +19,11 @@
 {% block content %}
 
 <h3>Book</h3>
-<form method="post" action="/books/{{book.id}}/delete" id="deleteForm">
+<form method="post" action="/books/{{post.id}}/delete" id="deleteForm">
   <div class="btn-group">
-    <a href="/books/{{book.id}}/edit" class="btn btn-primary btn-sm">
+    <a href="/books/{{post.id}}/edit" class="btn btn-primary btn-sm">
       <i class="glyphicon glyphicon-edit"></i>
-      Edit book
+      Edit post
     </a>
     <button id="submit" type="submit" class="btn btn-danger btn-sm">
       <i class="glyphicon glyphicon-trash"></i>
@@ -36,11 +36,12 @@
 <div class="media">
   <div class="media-body">
     <h4 class="book-title">
-      {{book.title}}
-      <small>{{book.publishedDate|date("F jS, Y")}}</small>
+      {{post.title}}
+      <small>{{post.publishedDate|date("F jS, Y")}}</small>
     </h4>
-    <h5 class="book-author">By {{book.author|default('Unknown', True)}}</h5>
-    <p class="book-description">{{book.description}}</p>
+    <h5 class="book-author">By {{post.author|default('Unknown', True)}}</h5>
+    <p class="book-description">{{post.description}}</p>
+    <img src={{post.image}}>
   </div>
 </div>
 {# [END book_details] #}

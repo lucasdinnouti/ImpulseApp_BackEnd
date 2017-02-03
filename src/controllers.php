@@ -94,7 +94,7 @@ $app->get('/posts/add', function () use ($app) {
 
 $app->post('/posts/add', function (Request $request) use ($app) {
     /** @var DataModelInterface $model */
-    $model = $ ['bookshelf.model'];
+    $model = $app['bookshelf.model'];
     $post = $request->request->all();
     if (!empty($post['date'])) {
         $d = new \DateTime($post['date']);
