@@ -21,6 +21,7 @@ namespace Google\Cloud\Samples\Bookshelf;
 /*
  * Adds all the controllers to $app.  Follows Silex Skeleton pattern.
  */
+use Google\Cloud\Datastore\Blob;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Google\Cloud\Samples\Bookshelf\DataModel\DataModelInterface;
@@ -44,8 +45,6 @@ $app->get('/posts/', function (Request $request) use ($app) {
         'next_page_token' => $postList['cursor'],
     ));
 });
-
-//////////////////////  A editar /////////////////////////////////////
 
 $app->post('/lists/', function (Request $request) use ($app) {
     /** @var DataModelInterface $model */
@@ -79,7 +78,6 @@ $app->post('/lists/', function (Request $request) use ($app) {
 });
 // [END index]
 
-//////////////////////////////////////////////////////////////////////
 
 // [START add]
 $app->get('/posts/add', function () use ($app) {
@@ -92,16 +90,48 @@ $app->get('/posts/add', function () use ($app) {
     ));
 });
 
+$app->get('/testeFile/', function () use ($app) {
+    /** @var Twig_Environment $twig */
+    $twig = $app['twig'];
+
+    return $twig->render('testeFile.html.twig');
+});
+
 $app->post('/posts/add', function (Request $request) use ($app) {
     /** @var DataModelInterface $model */
     $model = $app['bookshelf.model'];
-    $post = $request->request->all();
+
+    $token = $request->query->get('page_token');
+    $postList = $model->listPosts($app['bookshelf.page_size'], $token);
+
+    $post = $request->request->all();   
+
+    //método para definir o índice pode ser alterado
+    $newPostNumber = $postList['posts'][0]['AbsNum']+1;
+
+
+    print("\nfilesize: ".filesize($_FILES['image']['tmp_name'])."\n");
+
+
+    $imagedata = file_get_contents($_FILES['image']['tmp_name']);
+    $base64Data = base64_encode($imagedata); 
+    print("antes do blob");
+    $post['image'] = new Blob($imageData);
+    print($post['image']);
+    // $myfile = fopen($_FILES['image']['tmp_name'], "rb") or die("Unable to open file!");
+    // $post['image'] = stream_get_contents($myfile);
+    // fclose($myfile);
+
+    $post['AbsNum'] = $newPostNumber;
     if (!empty($post['date'])) {
         $d = new \DateTime($post['date']);
         $post['date'] = $d->setTimezone(
             new \DateTimeZone('UTC'))->format("Y-m-d\TH:i:s\Z");
     }
+    print_r($post);
     $id = $model->create($post);
+
+    return $postList['posts'][0]['AbsNum'];
 
 });
 // [END add]
@@ -181,7 +211,7 @@ $app->post('/impulse/', function () use ($app){
         /** @var DataModelInterface $model */
     $model = $app['bookshelf.model'];
     $post = $model->read("5639445604728832");
-    /** @var Twig_Environment $twig */
+    /** @var Twig_Environment $tw, there was an error uploading your fig */
 
     $resposta = $post['title'];
 

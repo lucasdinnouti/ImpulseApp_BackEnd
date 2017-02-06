@@ -34,7 +34,8 @@ class Datastore implements DataModelInterface
       'content'     => 'string',
       'image'       => 'string',
       'author'      => 'string',
-      'published'   => 'integer'
+      'published'   => 'integer',
+      'AbsNum'      => 'integer'
     ];
 
     public function __construct($projectId)
@@ -49,7 +50,7 @@ class Datastore implements DataModelInterface
     {
         $query = $this->datastore->query()
             ->kind('Post')
-            ->order('title')
+            ->order('AbsNum')
             ->limit($limit)
             ->start($cursor);
 
