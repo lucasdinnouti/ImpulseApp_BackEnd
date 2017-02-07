@@ -76,7 +76,9 @@ class Datastore implements DataModelInterface
         $this->verifyPost($post);
 
         $key = $this->datastore->key('Post');
-        $entity = $this->datastore->entity($key, $post);
+        $entity = $this->datastore->entity($key, $post, 
+            [ 'excludeFromIndexes' => ['image']]
+            );
 
         $this->datastore->insert($entity);
 
