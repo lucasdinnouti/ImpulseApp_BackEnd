@@ -91,6 +91,6 @@ if (in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1', 'fe80::1', '::1'])
 }
 
 // add service parameters
-$app['bookshelf.page_size'] = 10;
+$app['bookshelf.page_size'] = 9999;
 
 return $app;

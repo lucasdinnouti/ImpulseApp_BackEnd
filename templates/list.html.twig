@@ -17,7 +17,14 @@
 {% extends "base.html.twig" %}
 
 {% block content %}
+<style>
 
+img {
+  width: 70px;
+  height:70px;
+  image-rendering: optimizeSpeed;
+}
+</style>
 <h3>Posts</h3>
 <a href="/posts/add" class="btn btn-success btn-sm">
   <i class="glyphicon glyphicon-plus"></i>
@@ -29,7 +36,7 @@
 <div class="media">
   <a href="/posts/{{post.id}}">
     <div class="media-left">
-      <img src={{post.image}}>
+      <img src="{{post.image}}">
     </div>
     <div class="media-body">
       <h4>{{post.title}}</h4>

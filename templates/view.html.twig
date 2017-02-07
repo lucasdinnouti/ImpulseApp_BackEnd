@@ -18,16 +18,16 @@
 
 {% block content %}
 
-<h3>Book</h3>
-<form method="post" action="/books/{{post.id}}/delete" id="deleteForm">
+<h3>Post</h3>
+<form method="post" action="/posts/{{post.id}}/delete" id="deleteForm">
   <div class="btn-group">
-    <a href="/books/{{post.id}}/edit" class="btn btn-primary btn-sm">
+    <a href="/posts/{{post.id}}/edit" class="btn btn-primary btn-sm">
       <i class="glyphicon glyphicon-edit"></i>
       Edit post
     </a>
     <button id="submit" type="submit" class="btn btn-danger btn-sm">
       <i class="glyphicon glyphicon-trash"></i>
-      Delete book
+      Delete post
     </button>
   </div>
 </form>

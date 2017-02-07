@@ -40,7 +40,16 @@ $app->get('/posts/', function (Request $request) use ($app) {
     $token = $request->query->get('page_token');
     $postList = $model->listPosts($app['bookshelf.page_size'], $token);
 
+    $value = $postList['posts']['image'];
+
+    if (is_null($value)) {
+        $value = "no image found.";
+    } else {
+        $value = (string) $value->get();
+    }
+
     return $twig->render('list.html.twig', array(
+        'image' => $value,
         'posts' => $postList['posts'],
         'next_page_token' => $postList['cursor'],
     ));
@@ -108,31 +117,20 @@ $app->post('/posts/add', function (Request $request) use ($app) {
 
     //método para definir o índice pode ser alterado
     $newPostNumber = $postList['posts'][0]['AbsNum']+1;
-
-
-    print("\nfilesize: ".filesize($_FILES['image']['tmp_name'])."\n");
-
-
-    $imagedata = file_get_contents($_FILES['image']['tmp_name']);
-    $base64Data = base64_encode($imagedata); 
-    print("antes do blob");
-    $post['image'] = new Blob($imageData);
-    print($post['image']);
-    // $myfile = fopen($_FILES['image']['tmp_name'], "rb") or die("Unable to open file!");
-    // $post['image'] = stream_get_contents($myfile);
-    // fclose($myfile);
-
     $post['AbsNum'] = $newPostNumber;
+
+    //processamento da imagem
+    $imagedata = file_get_contents($_FILES['image']['tmp_name']);
+    $post['image'] = "data:image;base64,".base64_encode($imagedata); 
+
     if (!empty($post['date'])) {
         $d = new \DateTime($post['date']);
         $post['date'] = $d->setTimezone(
             new \DateTimeZone('UTC'))->format("Y-m-d\TH:i:s\Z");
     }
-    print_r($post);
+
     $id = $model->create($post);
-
-    return $postList['posts'][0]['AbsNum'];
-
+    return $app->redirect('/posts/'.$id);
 });
 // [END add]
 

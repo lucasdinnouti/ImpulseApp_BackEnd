@@ -118,7 +118,7 @@ class Datastore implements DataModelInterface
 
         // return the number of updated rows
         return 1;
-    }
+    }   
 
     public function delete($id)
     {
